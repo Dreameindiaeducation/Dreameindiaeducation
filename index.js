@@ -54,10 +54,7 @@ app.use("/", require("./app/router/creageform.routes"));
 app.use("/admin", require("./app/router/admin.pannel"));
 
 // Start server after database connections are established
-const PORT =  5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-  console.log(`http://localhost:${PORT} `);
-  console.log(`Database Connections:`);
-  console.log(`MongoDB Connected: ${process.env.MONGO_URI}`);
 });
