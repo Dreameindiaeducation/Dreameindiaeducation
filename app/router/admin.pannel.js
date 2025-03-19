@@ -34,73 +34,97 @@ router.get('/forms', async (req, res) => {
     }
 });
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, 
     auth: {
-        user: process.env.ADMIN_EMAIL, // Using environment variables
-        pass: process.env.ADMIN_PASSWORD // Your app password (not your actual password)
-    }
+        user: process.env.ADMIN_EMAIL || "no-reply@yourdomain.com",
+        pass: process.env.ADMIN_PASSWORD || "your_app_password",
+    },
 });
 
-router.post('/forms/update-status/:id', async (req, res) => {
+async function sendEmail(mailOptions, recipientType) {
+    try {
+        console.log(`Sending ${recipientType} Email to:`, mailOptions.to);
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`${recipientType} email sent successfully:`, info.response);
+    } catch (error) {
+        console.error(`Error sending ${recipientType} email:`, error);
+    }
+}
+
+router.post("/forms/update-status/:id", async (req, res) => {
     try {
         const { status } = req.body;
-        if (!['Pending', 'Approved', 'Rejected'].includes(status)) {
-            req.session.message = { type: 'danger', text: 'Invalid status' };
-            return res.redirect('/admin/forms');
+        if (!["Pending", "Approved", "Rejected"].includes(status)) {
+            req.session.message = { type: "danger", text: "Invalid status" };
+            return res.redirect("/admin/forms");
         }
 
-        const updatedForm = await Form.findByIdAndUpdate(
-            req.params.id, 
-            { status }, 
-            { new: true }
-        );
-
+        const updatedForm = await Form.findByIdAndUpdate(req.params.id, { status }, { new: true });
         if (!updatedForm) {
-            req.session.message = { type: 'danger', text: 'Form not found' };
-            return res.redirect('/admin/forms');
+            req.session.message = { type: "danger", text: "Form not found" };
+            return res.redirect("/admin/forms");
         }
 
-        // Send Email Notification
-        const mailOptions = {
-            from: '"NGO Support" <support@ngo.com>',
-            to: `${updatedForm.email}, ${process.env.ADMIN_EMAIL}`, // Send to user and admin
-            subject: `Status Update: ${status}`,
+        console.log("User Email:", updatedForm.email);
+        console.log("Admin Email:", process.env.ADMIN_EMAIL);
+
+        const userMailOptions = {
+            from: `"NGO Support" <no-reply@yourdomain.com>`, // ✅ Fixed sender
+            to: updatedForm.email,
+            replyTo: "support@yourdomain.com", 
+            subject: `Update for ${updatedForm.name} - Status: ${status}`,
+            headers: {
+                "List-Unsubscribe": "<mailto:unsubscribe@yourdomain.com>",
+                "X-Priority": "1",
+                "X-Mailer": "NodeMailer",
+            },
+            text: `Dear ${updatedForm.name},\n\nYour form status has been updated to ${status}.\n\nThank you, \nNGO Support Team`,
             html: `
-                <div style="font-family: Arial, sans-serif; border: 1px solid #ddd; border-radius: 10px; padding: 20px; max-width: 600px;">
+                <div style="font-family: Arial, sans-serif; border: 1px solid #ddd; padding: 20px; max-width: 600px;">
                     <h2 style="text-align: center; color: #4CAF50;">NGO Form Status Update</h2>
                     <p>Dear <strong>${updatedForm.name}</strong>,</p>
                     <p>Your form status has been updated to: <strong style="color: ${status === 'Approved' ? 'green' : status === 'Rejected' ? 'red' : 'orange'};">${status}</strong></p>
-                    <p><strong>Details:</strong></p>
-                    <ul>
-                        <li>Email: ${updatedForm.email}</li>
-                        <li>Mobile: ${updatedForm.mobileNo}</li>
-                        <li>Amount: ₹${updatedForm.amount}</li>
-                    </ul>
                     <p>Thank you for your patience.</p>
                     <hr>
                     <p style="text-align: center;">NGO Support Team</p>
                 </div>
-            `
+            `,
         };
 
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error("Error sending email:", error);
-            } else {
-                console.log("Email sent:", info.response);
-            }
-        });
+        const adminMailOptions = {
+            from: `"NGO Support" <no-reply@yourdomain.com>`, 
+            to: process.env.ADMIN_EMAIL,
+            subject: `Admin Notification: Form Updated - ${status}`,
+            text: `Form for ${updatedForm.name} has been updated to ${status}.`,
+            html: `
+                <div style="font-family: Arial, sans-serif; border: 1px solid #ddd; padding: 20px; max-width: 600px;">
+                    <h2 style="text-align: center; color: #FF5733;">NGO Admin Notification</h2>
+                    <p>Dear Admin,</p>
+                    <p>The form for <strong>${updatedForm.name}</strong> has been updated to ${status}.</p>
+                    <p>Keep track of further updates.</p>
+                    <hr>
+                    <p style="text-align: center;">NGO Support Team</p>
+                </div>
+            `,
+        };
 
-        // Set success message
-        req.session.message = { type: 'success', text: 'Status updated successfully and email sent' };
-        res.redirect('/admin/forms');
+        await sendEmail(userMailOptions, "User");
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // ✅ 5-sec delay
+        await sendEmail(adminMailOptions, "Admin");
 
+        req.session.message = { type: "success", text: "Status updated and email sent" };
+        res.redirect("/admin/forms");
     } catch (error) {
         console.error(error);
-        req.session.message = { type: 'danger', text: 'Error updating status' };
-        res.redirect('/admin/forms');
+        req.session.message = { type: "danger", text: "Error updating status" };
+        res.redirect("/admin/forms");
     }
 });
+
+module.exports = router;
+
 router.get('/forms/delete/:id',async (req, res) => {
     try {
         const { id } = req.params;
