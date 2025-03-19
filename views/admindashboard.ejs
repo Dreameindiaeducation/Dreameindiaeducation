@@ -83,9 +83,25 @@
                                     <button type="submit" class="btn btn-primary btn-sm mt-2">Update</button>
                                 </form>
                             </td>
-                            <td>
-                                <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#docs<%= index %>">View</button>
-                            </td>
+                            <strong>Additional Documents (PDFs):</strong>
+                                <ul class="list-unstyled">
+                                    <% if (form.documents.additionalDocs && form.documents.additionalDocs.length > 0) { %>
+                                        <% form.documents.additionalDocs.forEach(doc => { %>
+                                            <li>
+                                                <a href="/<%= doc.replace(/\\/g, '/') %>" target="_blank" class="btn btn-sm btn-primary">
+                                                    View PDF
+                                                </a>
+                                                <a href="/<%= doc.replace(/\\/g, '/') %>" download class="btn btn-sm btn-success">
+                                                    Download
+                                                </a>
+                                            </li>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <p>No additional documents uploaded</p>
+                                    <% } %>
+                                </ul>
+                            </div>
+                        </td>
                             <td>
                                 <a href="/admin/forms/delete/<%= form._id %>" class="btn btn-danger btn-sm">Delete</a>
                             </td>
