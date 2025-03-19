@@ -68,6 +68,14 @@
             <hr>
 
             <form action="/create" method="post" enctype="multipart/form-data" id="dreamForm">
+                    <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Registration Date: <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" name="date" required>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
@@ -96,12 +104,7 @@
                             <input type="email" class="form-control" unique name="email" required >
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label>Date: <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="date" required>
-                        </div>
-                    </div>
+                    
                 </div>
 
                 <h5>Address</h5>
