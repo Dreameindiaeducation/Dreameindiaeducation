@@ -83,7 +83,45 @@
                                     <button type="submit" class="btn btn-primary btn-sm mt-2">Update</button>
                                 </form>
                             </td>
-                            <strong>Additional Documents (PDFs):</strong>
+                            <td>
+                            <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#docs<%= index %>">
+                                View Documents
+                            </button>
+                            <div class="collapse mt-2" id="docs<%= index %>">
+                                <!-- Aadhar Photos -->
+                                <strong>Aadhar Photos:</strong>
+                                <div class="d-flex gap-2">
+                                    <% if (form.documents.aadharPhotos && form.documents.aadharPhotos.length > 0) { %>
+                                        <% form.documents.aadharPhotos.forEach(photo => { %>
+                                            <div class="text-center">
+                                                <img src="/<%= photo.replace(/\\/g, '/') %>" alt="Aadhar Photo" class="img-thumbnail" style="width: 100px;">
+                                                <br>
+                                                <a href="/<%= photo.replace(/\\/g, '/') %>" download class="btn btn-sm btn-success mt-1">Download</a>
+                                            </div>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <p>No Aadhar photos uploaded</p>
+                                    <% } %>
+                                </div>
+                        
+                                <!-- Student Photos -->
+                                <strong>Student Photos:</strong>
+                                <div class="d-flex gap-2 mt-2">
+                                    <% if (form.documents.studentPhotos && form.documents.studentPhotos.length > 0) { %>
+                                        <% form.documents.studentPhotos.forEach(photo => { %>
+                                            <div class="text-center">
+                                                <img src="/<%= photo.replace(/\\/g, '/') %>" alt="Student Photo" class="img-thumbnail" style="width: 100px;">
+                                                <br>
+                                                <a href="/<%= photo.replace(/\\/g, '/') %>" download class="btn btn-sm btn-success mt-1">Download</a>
+                                            </div>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <p>No Student photos uploaded</p>
+                                    <% } %>
+                                </div>
+        
+                                <!-- PDF Documents -->
+                                <strong>Additional Documents (PDFs):</strong>
                                 <ul class="list-unstyled">
                                     <% if (form.documents.additionalDocs && form.documents.additionalDocs.length > 0) { %>
                                         <% form.documents.additionalDocs.forEach(doc => { %>
