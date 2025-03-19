@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dream India Education Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/logo/WhatsApp Image 2025-03-18 at 10.54.56_c6ba014c.jpg" type="image/x-icon">
+    <style>
+        .form-container {
+            max-width: 700px;
+            margin: auto;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .logo-container img {
+            border-radius: 50%;
+        }
+        .text-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-left: 10px;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <% if (session.message) { %>
+            <div id="liveToast" class="toast align-items-center text-white bg-<%= session.message.type === 'success' ? 'success' : 'danger' %> border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <%= session.message.text %>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            <% session.message = null; %> <!-- Clear session message -->
+        <% } %>
+    </div>
+    
+    <!-- Initialize Bootstrap Toast -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var toastEl = document.getElementById('liveToast');
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            }
+        });
+    </script>
+    <div class="container mt-4">
+        <div class="form-container">
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="logo-container">
+                    <img src="/logo/WhatsApp Image 2025-03-18 at 10.54.56_c6ba014c.jpg" alt="Dream Logo" height="100px" width="100px">
+                </div>
+                <div class="text-container">
+                    <h3 class="mb-0">Dream India Education Pvt. Ltd.</h3>
+                    <h5 class="text-muted">G-129, 2nd Floor, Sec.-63, Noida</h5>
+                </div>
+            </div>
+            <hr>
+
+            <form action="/create" method="post" enctype="multipart/form-data" id="dreamForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Name: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Father's Name: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="fatherName" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Mobile No: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="mobileNo" unique required pattern="[0-9]{10}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Email: <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" unique name="email" required >
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Date: <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" name="date" required>
+                        </div>
+                    </div>
+                </div>
+
+                <h5>Address</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label>District: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="address[district]" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label>State: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="address[state]" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label>Pin Code: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="address[pincode]" required pattern="[0-9]{6}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Occupation: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="occupation" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Aadhar No: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="aadharNo" required pattern="[0-9]{12}">
+                        </div>
+                    </div>
+                </div>
+
+                <h5>School Details</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>School Name: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="schoolDetails[name]" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>School Contact No: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="schoolDetails[contactNo]" required pattern="[0-9]{10}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label>School District: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="schoolDetails[address][district]" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label>School State: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="schoolDetails[address][state]" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label>School Pin Code: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="schoolDetails[address][pincode]" required pattern="[0-9]{6}">
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>School Fee : <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="amount" required>
+                        </div>
+                    </div>
+                </div>
+
+
+               
+
+                <h5>Upload Documents</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label>Aadhaar Card Photo: <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control"  name="documents[aadharPhotos]" id="aadharPhoto" accept="image/*" multiple>
+                        <small class="text-danger d-none" id="aadharError">Select 1-2 photos.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Student Photo: <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" name="documents[studentPhotos]" id="studentPhoto" accept="image/*" multiple>
+                        <small class="text-danger d-none" id="studentError">Select 1-2 photos.</small>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" id="submitButton" class="btn btn-primary" onclick="submitForm()" disabled>Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function validateFiles() {
+            const aadharInput = document.getElementById('aadharPhoto');
+            const studentInput = document.getElementById('studentPhoto');
+            const submitButton = document.getElementById('submitButton');
+
+            let aadharValid = aadharInput.files.length >= 1 && aadharInput.files.length <= 2;
+            let studentValid = studentInput.files.length >= 1 && studentInput.files.length <= 2;
+
+            document.getElementById('aadharError').classList.toggle('d-none', aadharValid);
+            document.getElementById('studentError').classList.toggle('d-none', studentValid);
+
+            submitButton.disabled = !(aadharValid && studentValid);
+        }
+
+        document.getElementById('aadharPhoto').addEventListener('change', validateFiles);
+        document.getElementById('studentPhoto').addEventListener('change', validateFiles);
+    </script>
+
+</body>
+</html>
