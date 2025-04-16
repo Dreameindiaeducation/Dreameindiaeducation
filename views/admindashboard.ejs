@@ -135,7 +135,10 @@
                             </td>
                             <td>
                                 <a href="/admin/forms/delete/<%= form._id %>" class="btn btn-danger btn-sm mb-1">Delete</a>
-                                <button class="btn btn-secondary btn-sm" onclick="downloadUserDetails(<%= index %>)">Download</button>
+                                <td>
+  <button class="btn btn-success btn-sm" onclick='downloadUserDetails(<%- JSON.stringify(form).replace(/'/g, "\\'") %>)'>Download</button>
+</td>
+
                                 <textarea id="userData<%= index %>" style="display:none;">
 Name: <%= form.name %>
 Email: <%= form.email %>
@@ -186,57 +189,58 @@ Status: <%= form.status %>
         <p>&copy; <%= new Date().getFullYear() %> NGO Admin Panel. All Rights Reserved.</p>
     </footer>
 
-  <script>
-  const forms = <%- JSON.stringify(forms.reverse()) %>;
+<script>
+  function downloadUserDetails(form) {
+    const getFileLinks = (label, files = []) => {
+      if (!files.length) return `${label}: No files uploaded\n`;
+      let result = `${label}:\n`;
+      files.forEach((file, index) => {
+        const fixedPath = '/' + file.replace(/\\/g, '/');
+        result += `  ${index + 1}. ${window.location.origin}${fixedPath}\n`;
+      });
+      return result;
+    };
 
-  function downloadUserDetails(index) {
-    const form = forms[index];
+    const docContent = `
+Dream India Education Pvt. Ltd
+G-129, 2nd Floor, Sec.-63, Noida
 
-    const content = `
-============================================================
-                  Dream India Education Pvt. Ltd
-             G-129, 2nd Floor, Sec.-63, Noida (U.P.)
-============================================================
+----------------------------
+User Form Details
+----------------------------
 
-                 STUDENT REGISTRATION FORM
-------------------------------------------------------------
+Name             : ${form.name}
+Email            : ${form.email}
+Father's Name    : ${form.fatherName}
+Mobile           : ${form.mobileNo}
+Aadhar No        : ${form.aadharNo}
+Date             : ${new Date(form.date).toLocaleDateString()}
+Occupation       : ${form.occupation}
+District         : ${form.address?.district || ''}
+State            : ${form.address?.state || ''}
+Pincode          : ${form.address?.pincode || ''}
+School Name      : ${form.schoolDetails?.name || ''}
+School Contact   : ${form.schoolDetails?.contactNo || ''}
+Amount           : ₹${form.amount}
+Status           : ${form.status}
 
-Name           : ${form.name}
-Email          : ${form.email}
-Father's Name  : ${form.fatherName}
-Mobile No      : ${form.mobileNo}
-Aadhar No      : ${form.aadharNo}
-Date           : ${new Date(form.date).toLocaleDateString()}
-Occupation     : ${form.occupation}
+${getFileLinks('Aadhar Photos', form.documents?.aadharPhotos)}
+${getFileLinks('Student Photos', form.documents?.studentPhotos)}
+${getFileLinks('Additional Documents (PDFs)', form.documents?.additionalDocs)}
 
------------------- ADDRESS DETAILS -------------------------
-District       : ${form.address?.district || ""}
-State          : ${form.address?.state || ""}
-Pincode        : ${form.address?.pincode || ""}
+----------------------------
+  `.trim();
 
------------------- SCHOOL DETAILS --------------------------
-School Name    : ${form.schoolDetails?.name || ""}
-Contact No     : ${form.schoolDetails?.contactNo || ""}
-
-------------------- PAYMENT DETAILS ------------------------
-Amount Paid    : ₹${form.amount}
-Status         : ${form.status}
-
-============================================================
-
-Thank you for your registration!
-
-`;
-
-    const blob = new Blob([content], { type: 'text/plain' });
+    const blob = new Blob([docContent], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
-    
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${form.name.replace(/\s+/g, "_")}_Registration.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${form.name.replace(/\s+/g, '_')}_Details.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 </script>
 
