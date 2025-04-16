@@ -186,19 +186,59 @@ Status: <%= form.status %>
         <p>&copy; <%= new Date().getFullYear() %> NGO Admin Panel. All Rights Reserved.</p>
     </footer>
 
-    <script>
-        function downloadUserDetails(index) {
-            const data = document.getElementById('userData' + index).value;
-            const blob = new Blob([data], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
+  <script>
+  const forms = <%- JSON.stringify(forms.reverse()) %>;
 
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `user_details_${index + 1}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-    </script>
+  function downloadUserDetails(index) {
+    const form = forms[index];
+
+    const content = `
+============================================================
+                  Dream India Education Pvt. Ltd
+             G-129, 2nd Floor, Sec.-63, Noida (U.P.)
+============================================================
+
+                 STUDENT REGISTRATION FORM
+------------------------------------------------------------
+
+Name           : ${form.name}
+Email          : ${form.email}
+Father's Name  : ${form.fatherName}
+Mobile No      : ${form.mobileNo}
+Aadhar No      : ${form.aadharNo}
+Date           : ${new Date(form.date).toLocaleDateString()}
+Occupation     : ${form.occupation}
+
+------------------ ADDRESS DETAILS -------------------------
+District       : ${form.address?.district || ""}
+State          : ${form.address?.state || ""}
+Pincode        : ${form.address?.pincode || ""}
+
+------------------ SCHOOL DETAILS --------------------------
+School Name    : ${form.schoolDetails?.name || ""}
+Contact No     : ${form.schoolDetails?.contactNo || ""}
+
+------------------- PAYMENT DETAILS ------------------------
+Amount Paid    : ₹${form.amount}
+Status         : ${form.status}
+
+============================================================
+
+Thank you for your registration!
+
+`;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${form.name.replace(/\s+/g, "_")}_Registration.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+</script>
+
 </body>
 </html>
