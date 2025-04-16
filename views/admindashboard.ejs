@@ -23,11 +23,11 @@
         <h2>Dream India Education Pvt. Ltd</h2>
         <p>G-129, 2nd Floor, Sec.-63, Noida</p>
     </header>
-    
+
     <header class="bg-primary text-white text-center py-3">
         <h2>Admin Panel - Manage Submissions</h2>
     </header>
-    
+
     <div class="container mt-4" style="height:80vh;">
         <div class="table-container">
             <table class="table table-bordered text-center align-middle">
@@ -84,64 +84,74 @@
                                 </form>
                             </td>
                             <td>
-                            <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#docs<%= index %>">
-                                View Documents
-                            </button>
-                            <div class="collapse mt-2" id="docs<%= index %>">
-                                <!-- Aadhar Photos -->
-                                <strong>Aadhar Photos:</strong>
-                                <div class="d-flex gap-2">
-                                    <% if (form.documents.aadharPhotos && form.documents.aadharPhotos.length > 0) { %>
-                                        <% form.documents.aadharPhotos.forEach(photo => { %>
-                                            <div class="text-center">
-                                                <img src="/<%= photo.replace(/\\/g, '/') %>" alt="Aadhar Photo" class="img-thumbnail" style="width: 100px;">
-                                                <br>
-                                                <a href="/<%= photo.replace(/\\/g, '/') %>" download class="btn btn-sm btn-success mt-1">Download</a>
-                                            </div>
-                                        <% }); %>
-                                    <% } else { %>
-                                        <p>No Aadhar photos uploaded</p>
-                                    <% } %>
+                                <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#docs<%= index %>">
+                                    View Documents
+                                </button>
+                                <div class="collapse mt-2" id="docs<%= index %>">
+                                    <strong>Aadhar Photos:</strong>
+                                    <div class="d-flex gap-2">
+                                        <% if (form.documents.aadharPhotos && form.documents.aadharPhotos.length > 0) { %>
+                                            <% form.documents.aadharPhotos.forEach(photo => { %>
+                                                <div class="text-center">
+                                                    <img src="/<%= photo.replace(/\\/g, '/') %>" alt="Aadhar Photo" class="img-thumbnail" style="width: 100px;">
+                                                    <br>
+                                                    <a href="/<%= photo.replace(/\\/g, '/') %>" download class="btn btn-sm btn-success mt-1">Download</a>
+                                                </div>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <p>No Aadhar photos uploaded</p>
+                                        <% } %>
+                                    </div>
+
+                                    <strong>Student Photos:</strong>
+                                    <div class="d-flex gap-2 mt-2">
+                                        <% if (form.documents.studentPhotos && form.documents.studentPhotos.length > 0) { %>
+                                            <% form.documents.studentPhotos.forEach(photo => { %>
+                                                <div class="text-center">
+                                                    <img src="/<%= photo.replace(/\\/g, '/') %>" alt="Student Photo" class="img-thumbnail" style="width: 100px;">
+                                                    <br>
+                                                    <a href="/<%= photo.replace(/\\/g, '/') %>" download class="btn btn-sm btn-success mt-1">Download</a>
+                                                </div>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <p>No Student photos uploaded</p>
+                                        <% } %>
+                                    </div>
+
+                                    <strong>Additional Documents (PDFs):</strong>
+                                    <ul class="list-unstyled">
+                                        <% if (form.documents.additionalDocs && form.documents.additionalDocs.length > 0) { %>
+                                            <% form.documents.additionalDocs.forEach(doc => { %>
+                                                <li>
+                                                    <a href="/<%= doc.replace(/\\/g, '/') %>" target="_blank" class="btn btn-sm btn-primary">View PDF</a>
+                                                    <a href="/<%= doc.replace(/\\/g, '/') %>" download class="btn btn-sm btn-success">Download</a>
+                                                </li>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <p>No additional documents uploaded</p>
+                                        <% } %>
+                                    </ul>
                                 </div>
-                        
-                                <!-- Student Photos -->
-                                <strong>Student Photos:</strong>
-                                <div class="d-flex gap-2 mt-2">
-                                    <% if (form.documents.studentPhotos && form.documents.studentPhotos.length > 0) { %>
-                                        <% form.documents.studentPhotos.forEach(photo => { %>
-                                            <div class="text-center">
-                                                <img src="/<%= photo.replace(/\\/g, '/') %>" alt="Student Photo" class="img-thumbnail" style="width: 100px;">
-                                                <br>
-                                                <a href="/<%= photo.replace(/\\/g, '/') %>" download class="btn btn-sm btn-success mt-1">Download</a>
-                                            </div>
-                                        <% }); %>
-                                    <% } else { %>
-                                        <p>No Student photos uploaded</p>
-                                    <% } %>
-                                </div>
-        
-                                <!-- PDF Documents -->
-                                <strong>Additional Documents (PDFs):</strong>
-                                <ul class="list-unstyled">
-                                    <% if (form.documents.additionalDocs && form.documents.additionalDocs.length > 0) { %>
-                                        <% form.documents.additionalDocs.forEach(doc => { %>
-                                            <li>
-                                                <a href="/<%= doc.replace(/\\/g, '/') %>" target="_blank" class="btn btn-sm btn-primary">
-                                                    View PDF
-                                                </a>
-                                                <a href="/<%= doc.replace(/\\/g, '/') %>" download class="btn btn-sm btn-success">
-                                                    Download
-                                                </a>
-                                            </li>
-                                        <% }); %>
-                                    <% } else { %>
-                                        <p>No additional documents uploaded</p>
-                                    <% } %>
-                                </ul>
-                            </div>
-                        </td>
+                            </td>
                             <td>
-                                <a href="/admin/forms/delete/<%= form._id %>" class="btn btn-danger btn-sm">Delete</a>
+                                <a href="/admin/forms/delete/<%= form._id %>" class="btn btn-danger btn-sm mb-1">Delete</a>
+                                <button class="btn btn-secondary btn-sm" onclick="downloadUserDetails(<%= index %>)">Download</button>
+                                <textarea id="userData<%= index %>" style="display:none;">
+Name: <%= form.name %>
+Email: <%= form.email %>
+Father's Name: <%= form.fatherName %>
+Mobile: <%= form.mobileNo %>
+Aadhar No: <%= form.aadharNo %>
+Date: <%= new Date(form.date).toLocaleDateString() %>
+Occupation: <%= form.occupation %>
+District: <%= form.address.district %>
+State: <%= form.address.state %>
+Pincode: <%= form.address.pincode %>
+School Name: <%= form.schoolDetails.name %>
+School Contact: <%= form.schoolDetails.contactNo %>
+Amount: ₹<%= form.amount %>
+Status: <%= form.status %>
+                                </textarea>
                             </td>
                         </tr>
                     <% }); %>
@@ -149,6 +159,7 @@
             </table>
         </div>
     </div>
+
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
             <% if (currentPage > 1) { %>
@@ -156,13 +167,13 @@
                     <a class="page-link" href="/admin/forms?page=<%= currentPage - 1 %>">Previous</a>
                 </li>
             <% } %>
-    
+
             <% for (let i = 1; i <= totalPages; i++) { %>
                 <li class="page-item <%= i === currentPage ? 'active' : '' %>">
                     <a class="page-link" href="/admin/forms?page=<%= i %>"><%= i %></a>
                 </li>
             <% } %>
-    
+
             <% if (currentPage < totalPages) { %>
                 <li class="page-item">
                     <a class="page-link" href="/admin/forms?page=<%= currentPage + 1 %>">Next</a>
@@ -170,9 +181,24 @@
             <% } %>
         </ul>
     </nav>
-    
+
     <footer class="bg-light text-center text-muted py-3 mt-3">
         <p>&copy; <%= new Date().getFullYear() %> NGO Admin Panel. All Rights Reserved.</p>
     </footer>
+
+    <script>
+        function downloadUserDetails(index) {
+            const data = document.getElementById('userData' + index).value;
+            const blob = new Blob([data], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `user_details_${index + 1}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
 </body>
 </html>
